@@ -1,4 +1,4 @@
 # dungeon-crawler-python-LP
-A dungeon crwaler game with labyrinth in python
+A dungeon crwaler game in a maze
 
 pip install pygame

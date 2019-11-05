@@ -1,4 +1,4 @@
-class Player:
+'''class Player:
     self.vida
     self.xp
     self.nivel
@@ -39,7 +39,7 @@ class Batalha:
     self.player
     self.inimigo
     
-    
+ '''   
 #criador de labrinto    
 from random import shuffle, randrange
  
@@ -72,8 +72,22 @@ if __name__ == '__main__':
     f.write(lab)
     f.close()
     j = open('./new.txt','r')
+    '''for i in j.readlines():
+        f = i.split('\n')
+        for k in f:
+            print(k,end='')
+        print()'''
+    cont =0 
     for i in j.readlines():
-        print(i.split('\n'))
+        f = i.split('\n')
+        cont +=1
+        cont2 =0 
+        for k in f[0]:
+            cont2+=1
+            if k == '+':
+                print('[{},{}]'.format(cont,cont2),end=' ')
+        print()
+        # print('->',j, len(j[0]))
     
 #ideia pra pegar posicao, exemplo se for matriz de 32 linha x 32 coluna, posicao é x = n * 32 , y = n * 32, 
 # conforme o personagem anda aumenta/diminui x e y
