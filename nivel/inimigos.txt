@@ -1,0 +1,3 @@
+nome 	power
+A	200
+B	300
