@@ -45,8 +45,8 @@ from random import shuffle, randrange
  
 def make_maze(w = 16, h = 8):
     vis = [[0] * w + [1] for _ in range(h)] + [[1] * (w + 1)]
-    ver = [["+  "] * w + ['+'] for _ in range(h)] + [[]]
-    hor = [["+++"] * w + ['+'] for _ in range(h + 1)]
+    ver = [['*  '] * w + ['*'] for _ in range(h)] + [[]]
+    hor = [['***'] * w + ['*'] for _ in range(h + 1)]
  
     def walk(x, y):
         vis[y][x] = 1
@@ -55,8 +55,8 @@ def make_maze(w = 16, h = 8):
         shuffle(d)
         for (xx, yy) in d:
             if vis[yy][xx]: continue
-            if xx == x: hor[max(y, yy)][x] = "+  "
-            if yy == y: ver[y][max(x, xx)] = "   "
+            if xx == x: hor[max(y, yy)][x] = '*  '
+            if yy == y: ver[y][max(x, xx)] = '   '
             walk(xx, yy)
  
     walk(randrange(w), randrange(h))
@@ -67,16 +67,21 @@ def make_maze(w = 16, h = 8):
     return s
  
 if __name__ == '__main__':
-    lab = make_maze(10,14)
-    f = open('new.txt','w')
+    lab = make_maze(10,10)
+    f = open('nivel1.txt','w')
     f.write(lab)
     f.close()
-    j = open('./new.txt','r')
-    '''for i in j.readlines():
-        f = i.split('\n')
-        for k in f:
-            print(k,end='')
-        print()'''
+    lab = make_maze(12,12)
+    f = open('nivel2.txt','w')
+    f.write(lab)
+    f.close()
+    lab = make_maze(14,14)
+    f = open('nivel3.txt','w')
+    f.write(lab)
+    f.close()
+    
+    
+    j = open('nivel1.txt','r')
     cont =0 
     for i in j.readlines():
         f = i.split('\n')
@@ -84,10 +89,9 @@ if __name__ == '__main__':
         cont2 =0 
         for k in f[0]:
             cont2+=1
-            if k == '+':
+            if k == '*':
                 print('[{},{}]'.format(cont,cont2),end=' ')
         print()
-        # print('->',j, len(j[0]))
     
 #ideia pra pegar posicao, exemplo se for matriz de 32 linha x 32 coluna, posicao é x = n * 32 , y = n * 32, 
 # conforme o personagem anda aumenta/diminui x e y
