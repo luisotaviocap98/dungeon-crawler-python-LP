@@ -1,0 +1,19 @@
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+X        X     X  X     X           X           X
+X  XXXX  X  X  X  X  X  X  X  XXXX  XXXX  XXXX  X
+X  X     X  X     X  X     X  X        X  X     X
+X  X  XXXX  XXXX  X  XXXXXXX  XXXXXXX  XXXX  X  X
+X  X     X  X     X  X     X        X        X  X
+X  XXXX  X  X  XXXX  X  X  XXXXXXX  XXXXXXXXXX  X
+X  X        X     X  X  X     X     X     X     X
+X  XXXX  XXXXXXXXXX  X  X  XXXX  XXXXXXX  X  XXXX
+X     X  X           X  X  X     X        X  X  X
+X  X  XXXX  XXXXXXXXXX  XXXX  XXXX  X  XXXX  X  X
+X  X        X           X  X  X     X     X     X
+X  XXXXXXXXXX  XXXX  XXXX  X  XXXXXXXXXX  XXXX  X
+X  X        X  X     X     X           X  X     X
+X  X  XXXX  XXXX  X  X  XXXXXXXXXXXXX  X  X  XXXX
+X     X           X  X                 X        X
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
