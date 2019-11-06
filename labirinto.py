@@ -1,3 +1,4 @@
+import pygame
 class Player:
     def __init__(self):
         self.xp = 0
@@ -116,15 +117,52 @@ if __name__ == '__main__':
         coluna = list()
         f = i.split('\n')
         cont +=1
-        cont2 =0 
+        cont2 =0
+         
         for k in f[0]:
             cont2+=1
             coluna.append(k)
-            if k == '*':
-                print('[{},{}]'.format(cont,cont2),end=' ')
-        print()
         linha.append(coluna.copy())
         coluna.clear()
-    print(linha)
+    
+    #    if k == '*':
+    #            print('[{},{}]'.format(cont,cont2),end=' ')
+    #    print()
+    #print(linha[0][0])
+    #j.close()
+   
+    image = pygame.image.load('./sprites/parede/wall-16.png')
+    bau = pygame.image.load('./sprites/bau/Treasure Chest closed 16x16.png')
+    porta = pygame.image.load('./sprites/porta/castledoors16.png')
+    
+    pygame.init()
+    screen = pygame.display.set_mode((1280, 600))
+    done = False
+    clock = pygame.time.Clock()
+    
+    window = (16,16)
+    background = pygame.Surface(window)
+    pygame.draw.rect(background,(1,1,1),(0,0,1,1))
+    
+    while not done:
+        for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                        done = True
+
+        screen.fill((255, 255, 255))
+
+        for i in range(0, len(linha)):
+            for j in range(0, len(linha[i])):
+                if linha[i][j] == '*':
+                    screen.blit(image, (640+i*16, 10+j*16))
+                # elif linha[i][j] == ' ':
+                #     screen.blit(background,(640+j*16, 10+i*16))
+                elif linha[i][j] == 'B':
+                    screen.blit(bau,(640+i*16, 10+j*16))
+                elif linha[i][j] == 'S':
+                    screen.blit(porta,(640+i*16, 10+j*16))
+                    
+        pygame.display.flip()
+        clock.tick(60)
 #ideia pra pegar posicao, exemplo se for matriz de 32 linha x 32 coluna, posicao é x = n * 32 , y = n * 32, 
 # conforme o personagem anda aumenta/diminui x e y
