@@ -1,4 +1,7 @@
 import pygame
+# pylint: disable=no-member
+# pylint: disable-msg=too-many-function-args
+
 class Player:
     def __init__(self):
         self.xp = 0
@@ -111,7 +114,7 @@ if __name__ == '__main__':
     f.close()
     '''
     linha = list()
-    j = open('nivel1.txt','r')
+    j = open('nivel2.txt','r')
     cont =0 
     for i in j.readlines():
         coluna = list()
@@ -133,17 +136,19 @@ if __name__ == '__main__':
    
     image = pygame.image.load('./sprites/parede/wall-16.png')
     bau = pygame.image.load('./sprites/bau/Treasure Chest closed 16x16.png')
-    porta = pygame.image.load('./sprites/porta/castledoors16.png')
-    
-    pygame.init()
-    screen = pygame.display.set_mode((1280, 600))
-    done = False
-    clock = pygame.time.Clock()
+    porta = pygame.image.load('./sprites/porta/fsmdoor.png')
+    modoRun = pygame.image.load('./sprites/modos/mode_R.png')
     
     window = (16,16)
     background = pygame.Surface(window)
     pygame.draw.rect(background,(1,1,1),(0,0,1,1))
     
+    
+    pygame.init()
+    screen = pygame.display.set_mode((1280, 640))
+    done = False
+    clock = pygame.time.Clock()
+       
     while not done:
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -151,16 +156,41 @@ if __name__ == '__main__':
 
         screen.fill((255, 255, 255))
 
+        basicfont = pygame.font.SysFont(None, 30)
+        text1 = basicfont.render('W - cima', True, (0, 0, 0), (255, 255, 255))
+        text2 = basicfont.render('S - baixo', True, (0, 0, 0), (255, 255, 255))
+        text3 = basicfont.render('A - esquerda', True, (0, 0, 0), (255, 255, 255))
+        text4 = basicfont.render('D - direita', True, (0, 0, 0), (255, 255, 255))
+
+        textf = basicfont.render('forca:     100', True, (0, 0, 0), (255, 255, 255))
+        textd = basicfont.render('defesa:    200', True, (0, 0, 0), (255, 255, 255))
+        texta = basicfont.render('acuracia:  50', True, (0, 0, 0), (255, 255, 255))
+        texth = basicfont.render('destreza:  10', True, (0, 0, 0), (255, 255, 255))
+        textc = basicfont.render('critico:   30', True, (0, 0, 0), (255, 255, 255))
+
+        screen.blit(textf, (650,500))
+        screen.blit(textd, (650,530))
+        screen.blit(texta, (650,560))
+        screen.blit(texth, (650,590))
+        screen.blit(textc, (650,620))
+
+        screen.blit(text1, (50,500))
+        screen.blit(text2, (50,530))
+        screen.blit(text3, (50,560))
+        screen.blit(text4, (50,590))
+        
+        screen.blit(modoRun, (10,10))
+
         for i in range(0, len(linha)):
             for j in range(0, len(linha[i])):
                 if linha[i][j] == '*':
-                    screen.blit(image, (640+i*16, 10+j*16))
+                    screen.blit(image, (640+j*16, 10+i*16))
                 # elif linha[i][j] == ' ':
                 #     screen.blit(background,(640+j*16, 10+i*16))
                 elif linha[i][j] == 'B':
-                    screen.blit(bau,(640+i*16, 10+j*16))
+                    screen.blit(bau,(640+j*16, 10+i*16))
                 elif linha[i][j] == 'S':
-                    screen.blit(porta,(640+i*16, 10+j*16))
+                    screen.blit(porta,(640+j*16, 10+i*16))
                     
         pygame.display.flip()
         clock.tick(60)
