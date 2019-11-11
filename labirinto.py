@@ -40,9 +40,9 @@ def createMaze():
     f.close()
     
 
-def carregaMap():
+def carregaMap(arq):
     linha = list()
-    j = open('nivel3.txt','r')
+    j = open(arq,'r')
     cont =0 
     for i in j.readlines():
         coluna = list()
@@ -59,5 +59,6 @@ def carregaMap():
     
     return (linha,cont,cont2)
     
+i = {'a':'oi', 'b':'mundo'}
 if __name__ == '__main__':
     createMaze()
