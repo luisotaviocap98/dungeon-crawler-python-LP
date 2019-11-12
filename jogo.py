@@ -100,10 +100,14 @@ def modoCorre():
     screen.blit(text3, (50,560))
     screen.blit(text4, (50,590))
     
-def modoSaida():
+def modoSaida(nivel):
     screen.blit(modo_atual, (10,10))
     text3 = basicfont.render('Nivel finalizado', True, (0, 0, 0), (255, 255, 255))
     screen.blit(text3, (50,500))
+    mudarNivel(nivel)
+
+def mudarNivel(nivel_atual):
+    nivel_atual +=1
 
 def modoChest():
     screen.blit(modo_atual, (10,10))
@@ -115,10 +119,19 @@ def modoChest():
     screen.blit(text2, (50,530))
     screen.blit(text3, (50,560))
     
+    
+def modoInimigo(charPos):
+    screen.blit(inimigos[int(charPos) -1 ].sprite, (10,10))
+    text1 = basicfont.render('inimigo encontrado', True, (0, 0, 0), (255, 255, 255))
+    text2 = basicfont.render('poder:'+str(inimigos[int(charPos)-1].stats.power), True, (0, 0, 0), (255, 255, 255))
+    
+    screen.blit(text1, (50,500))
+    screen.blit(text2, (50,530))
+    
 def vectInimigo():
     Enemy = list()
-    for i in range(1,7):
-        Enemy.append(Inimigo(SF.inimigoDict[str(i)]))
+    for i in range(0,6):
+        Enemy.append(Inimigo(SF.modoDict[str(i+1)]))
     return Enemy
 
 def verificaModo(mapa,x,y):
@@ -139,11 +152,8 @@ if __name__ == '__main__':
     boneco = Player()
     
     inimigos = vectInimigo()
-    
-    modo_atual = verificaModo(mapa,boneco.posicao_linha,boneco.posicao_coluna)
        
-    tecla_valida = [pygame.K_w,pygame.K_a,pygame.K_s,pygame.K_d]
-    basicfont = pygame.font.SysFont(None, 30)
+    basicfont = pygame.font.SysFont(None, 25)
     
     while not done:
         for event in pygame.event.get():
@@ -152,12 +162,16 @@ if __name__ == '__main__':
                         pygame.quit()
             
         screen.fill((255, 255, 255))#fundo da tela
-
+        
+        modo_atual = verificaModo(mapa,boneco.posicao_linha,boneco.posicao_coluna)
+        charCoordenada = mapa.matriz[boneco.posicao_linha][boneco.posicao_coluna]
         #modo a ser exibido
-        if mapa.matriz[boneco.posicao_linha][boneco.posicao_coluna] == 'B':
+        if charCoordenada == 'B':
             modoChest()
-        elif mapa.matriz[boneco.posicao_linha][boneco.posicao_coluna] == 'S':
-            modoSaida()
+        elif charCoordenada == 'S':
+            modoSaida(nivel_atual)
+        elif charCoordenada.isnumeric():
+            modoInimigo(charCoordenada)
         else:
             modoCorre()
                 
@@ -170,13 +184,8 @@ if __name__ == '__main__':
         event = poll()
         if event.type == pygame.KEYDOWN:
             boneco.andar(event.key,mapa)
-            # if event.key in tecla_valida:
-                # if randint(0,map_X*map_Y)/float(map_X*map_Y) > 0.95:
-                    # E = choice(inimigos)
-                    # print('modo batalha')
-                    # screen.blit(E.sprite, (10,10))
+            
                 
-        modo_atual = verificaModo(mapa,boneco.posicao_linha,boneco.posicao_coluna)
         #desenhando personagem
         boneco.desenhaPlayer()
         
