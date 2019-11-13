@@ -155,11 +155,20 @@ if __name__ == '__main__':
        
     basicfont = pygame.font.SysFont(None, 25)
     
+
+
+    # for event in pygame.event.get():
+    #     if event.type == MOUSEBUTTONDOWN:
+    #         print(event.type)
+    keyPress = None
     while not done:
+        # pygame.event.set_allowed(pygame.QUIT)
         for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                        done = True
-                        pygame.quit()
+            if event.type == pygame.QUIT:
+                done = True
+                # pygame.quit()
+            elif event.type == pygame.KEYDOWN:
+                keyPress = event.key
             
         screen.fill((255, 255, 255))#fundo da tela
         
@@ -180,10 +189,10 @@ if __name__ == '__main__':
         mapa.printMap()
                 
         #teclas de movimento do personagem
-        poll = pygame.event.poll
-        event = poll()
-        if event.type == pygame.KEYDOWN:
-            boneco.andar(event.key,mapa)
+       
+        # poll = pygame.event.poll
+        # event = poll()
+        boneco.andar(keyPress,mapa)
             
                 
         #desenhando personagem
