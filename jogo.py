@@ -13,24 +13,65 @@ class Player:
         self.stats = Stats(100,100,10,50,20,80)
         self.posicao_linha = 1
         self.posicao_coluna = 1
+        self.col_anterior = 1
+        self.lin_anterior = 1
         
-    def andar(self,direcao,mapa):
+    def andar(self,direcao):
         if direcao == pygame.K_w and mapa.matriz[self.posicao_linha-1][self.posicao_coluna]!='*':
+            self.salvaPosicaoAnterior()
             self.posicao_linha -=1
             self.sprite_atual =SF.playerDict[direcao]
 
         elif direcao == pygame.K_a and mapa.matriz[self.posicao_linha][self.posicao_coluna-1]!='*':
+            self.salvaPosicaoAnterior()
             self.posicao_coluna -=1
             self.sprite_atual =SF.playerDict[direcao]
             
         elif direcao == pygame.K_s and mapa.matriz[self.posicao_linha+1][self.posicao_coluna]!='*':
+            self.salvaPosicaoAnterior()
             self.posicao_linha += 1
             self.sprite_atual =SF.playerDict[direcao]
 
         elif direcao == pygame.K_d and mapa.matriz[self.posicao_linha][self.posicao_coluna+1]!='*':
+            self.salvaPosicaoAnterior()
             self.posicao_coluna +=1
             self.sprite_atual = SF.playerDict[direcao]
     
+    def salvaPosicaoAnterior(self):
+        self.col_anterior = self.posicao_coluna 
+        self.lin_anterior = self.posicao_linha 
+    
+    def retornaPosicaoAnterior(self):
+        self.posicao_coluna = self.col_anterior
+        self.posicao_linha = self.lin_anterior
+
+    def findBau(self,comando):
+        if comando == pygame.K_c:
+            print('pegou')
+            mapa.matriz[self.posicao_linha][self.posicao_coluna] = ' '
+        elif comando == pygame.K_x:
+            print('rejeitou')
+            self.retornaPosicaoAnterior()
+    
+    def combate(self,comando):
+        if comando == pygame.K_z:
+            print('batalhando')
+        elif comando == pygame.K_x:
+            print('fugiu')
+            self.retornaPosicaoAnterior()
+        elif comando == pygame.K_c:
+            print('meteu pocao')
+                        
+    def comandoValido(self, modo):
+        if modo == ' ':
+            self.andar(event.key)
+        elif modo == 'B':
+            self.findBau(event.key)
+        elif modo.isnumeric():
+            self.combate(event.key)
+        # elif modo == 'S':
+            
+
     def desenhaPlayer(self):
         screen.blit(self.sprite_atual, (643+self.posicao_coluna*16,10+self.posicao_linha*16))
         
@@ -53,12 +94,11 @@ class Mapa:
         self.fog = None
         self.altura = Y
         self.largura = X
-        
     
     def printMap(self):
         for i in range(0, len(self.matriz)):
             for j in range(0, len(self.matriz[i])):
-                if self.matriz[i][j] != ' ':
+                if self.matriz[i][j] != ' ' and not (self.matriz[i][j]).isnumeric():
                     screen.blit(SF.mapDict[self.matriz[i][j]], (640+j*16, 10+i*16))
                 
     
@@ -88,7 +128,7 @@ class Inimigo:
         self.sprite = img
     
 
-def modoCorre():
+def modoCorre(modo_atual):
     screen.blit(modo_atual, (10,10))
     text1 = basicfont.render('W - cima', True, (0, 0, 0), (255, 255, 255))
     text2 = basicfont.render('S - baixo', True, (0, 0, 0), (255, 255, 255))
@@ -100,16 +140,16 @@ def modoCorre():
     screen.blit(text3, (50,560))
     screen.blit(text4, (50,590))
     
-def modoSaida(nivel):
+def modoSaida(modo_atual):
     screen.blit(modo_atual, (10,10))
     text3 = basicfont.render('Nivel finalizado', True, (0, 0, 0), (255, 255, 255))
     screen.blit(text3, (50,500))
-    mudarNivel(nivel)
+    # mudarNivel(nivel)
 
 def mudarNivel(nivel_atual):
     nivel_atual +=1
 
-def modoChest():
+def modoChest(modo_atual):
     screen.blit(modo_atual, (10,10))
     text1 = basicfont.render('bau encontrado', True, (0, 0, 0), (255, 255, 255))
     text2 = basicfont.render('C - abrir e pegar', True, (0, 0, 0), (255, 255, 255))
@@ -119,7 +159,6 @@ def modoChest():
     screen.blit(text2, (50,530))
     screen.blit(text3, (50,560))
     
-    
 def modoInimigo(charPos):
     screen.blit(inimigos[int(charPos) -1 ].sprite, (10,10))
     text1 = basicfont.render('inimigo encontrado', True, (0, 0, 0), (255, 255, 255))
@@ -128,14 +167,25 @@ def modoInimigo(charPos):
     screen.blit(text1, (50,500))
     screen.blit(text2, (50,530))
     
+def changeModo(caracter,modo_atual):
+    if caracter == ' ':
+        modoCorre(modo_atual)
+    elif caracter == 'B':
+        modoChest(modo_atual)
+    elif caracter == 'S':
+        modoSaida(modo_atual)
+    elif caracter.isnumeric():
+        modoInimigo(caracter)
+
+
 def vectInimigo():
     Enemy = list()
     for i in range(0,6):
         Enemy.append(Inimigo(SF.modoDict[str(i+1)]))
     return Enemy
 
-def verificaModo(mapa,x,y):
-    return SF.modoDict[mapa.matriz[x][y]]   
+def verificaModo(bit):
+    return SF.modoDict[bit]   
 
 if __name__ == '__main__':
     pygame.init()
@@ -155,49 +205,40 @@ if __name__ == '__main__':
        
     basicfont = pygame.font.SysFont(None, 25)
     
-
-
-    # for event in pygame.event.get():
-    #     if event.type == MOUSEBUTTONDOWN:
-    #         print(event.type)
-    keyPress = None
+    screen.fill((255, 255, 255))#fundo da tela
+    mapa.printMap()
+    boneco.desenhaPlayer()
+    boneco.mostraStats()
+    charCoordenada = mapa.matriz[boneco.posicao_linha][boneco.posicao_coluna]
+    modo_atual = verificaModo(charCoordenada)
+    changeModo(charCoordenada,modo_atual)
+    
     while not done:
-        # pygame.event.set_allowed(pygame.QUIT)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
-                # pygame.quit()
             elif event.type == pygame.KEYDOWN:
-                keyPress = event.key
-            
-        screen.fill((255, 255, 255))#fundo da tela
+               
+                screen.fill((255, 255, 255))#fundo da tela
+                mapa.printMap()
         
-        modo_atual = verificaModo(mapa,boneco.posicao_linha,boneco.posicao_coluna)
-        charCoordenada = mapa.matriz[boneco.posicao_linha][boneco.posicao_coluna]
-        #modo a ser exibido
-        if charCoordenada == 'B':
-            modoChest()
-        elif charCoordenada == 'S':
-            modoSaida(nivel_atual)
-        elif charCoordenada.isnumeric():
-            modoInimigo(charCoordenada)
-        else:
-            modoCorre()
-                
-        boneco.mostraStats()
-        #printando labirinto
-        mapa.printMap()
-                
-        #teclas de movimento do personagem
-       
-        # poll = pygame.event.poll
-        # event = poll()
-        boneco.andar(keyPress,mapa)
-            
-                
-        #desenhando personagem
-        boneco.desenhaPlayer()
+                #modo a ser exibido
+                # if charCoordenada == 'B':
+                    # modoChest()
+                # elif charCoordenada == 'S':
+                    # modoSaida(nivel_atual)
+                # elif charCoordenada.isnumeric():
+                    # modoInimigo(charCoordenada)
+                # else:
+                    # modoCorre()
+                        
+                boneco.comandoValido(charCoordenada)
+                boneco.desenhaPlayer()
+                boneco.mostraStats()
+                charCoordenada = mapa.matriz[boneco.posicao_linha][boneco.posicao_coluna]
+                modo_atual = verificaModo(charCoordenada)
+                changeModo(charCoordenada,modo_atual)
         
         pygame.display.update()
-        clock.tick(100)
+        clock.tick(50)
 
