@@ -43,21 +43,17 @@ def createMaze():
 def carregaMap(arq):
     linha = list()
     arquivo = open(arq,'r')
-    cont =0 
     for i in arquivo.readlines():
         coluna = list()
         caracteres = i.split('\n')
-        cont +=1
-        cont2 =0
          
         for j in caracteres[0]:
-            cont2+=1
             coluna.append(j)
         linha.append(coluna.copy())
         coluna.clear()
     arquivo.close()
     
-    return (linha,cont,cont2)
+    return linha
     
 if __name__ == '__main__':
     createMaze()
