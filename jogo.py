@@ -43,19 +43,22 @@ class Player:
     
 class Inimigo:
     def __init__(self, img):
-        self.stats = Stats(100,100,10,50,20,80)
+        self.stats = Stats(80,100,10,50,30,70)
         self.sprite = img
+        # 100,100,10,50,20,80
 
 class Mapa:
     def __init__(self, mapa):
         self.matriz = mapa
-        self.fog = None
+        self.fog = [[0]*len(self.matriz[0])]*len(self.matriz)
 
     def printMap(self):
         for i in range(0, len(self.matriz)):
             for j in range(0, len(self.matriz[i])):
                 if self.matriz[i][j] != ' ' and not (self.matriz[i][j]).isnumeric():
                     screen.blit(SF.mapDict[self.matriz[i][j]], (640+j*16, 10+i*16))
+                    
+    
     
 class Stats:
     def __init__(self,vida, forca, critico, destreza, acuracia, defesa):
@@ -88,7 +91,16 @@ class Game:
         self.fases = ['fase1.txt','fase2.txt','fase3.txt']
         self.matriz_mapa = labirinto.carregaMap(self.fases[self.fase_atual])
         self.mapa = Mapa(self.matriz_mapa)
+        self.batalhaMensagem = ''
 
+    def mudarFase(self):
+        if self.fase_atual < len(self.fases) - 1:
+            self.fase_atual += 1
+            self.matriz_mapa = labirinto.carregaMap(self.fases[self.fase_atual])
+            self.mapa = Mapa(self.matriz_mapa)
+            self.modo_atual = 'run'
+            self.jogador.posicao.x , self.jogador.posicao.y = 1,1
+            
     def refreshTela(self):
         screen.fill((255, 255, 255))#fundo da tela
         self.mapa.printMap()
@@ -129,22 +141,49 @@ class Game:
 
 
     def usarPocao(self,player):
-        player.stats.vida +=1
+        player.stats.vida +=10
 
     def batalhar(self,player,inimigo):
-        
+        # self.vida = vida
+        # self.forca = forca
+        # self.defesa= defesa
+        # self.critico= critico
+        # self.destreza= destreza
+        # self.acuracia= acuracia
         if inimigo.stats.destreza < player.stats.acuracia:
-            print('consegue atacar')
-        if inimigo.stats.destreza > player.stats.acuracia:
-            print('nao acertou inimigo')
+            # print('consegue atacar')
+            inimigo.stats.vida -= 10
+            self.batalhaMensagem = 'Atacou o inimgo'
+            # self.dueloInimigo('Atacou o inimgo')
+        elif inimigo.stats.destreza > player.stats.acuracia:
+            # player.stats.acuracia -=5
+            player.stats.vida -= 5
+            # self.dueloInimigo('Errou o inimgo')
+            self.batalhaMensagem = 'Errou o inimgo'
+            # print('nao acertou inimigo')
         if inimigo.stats.acuracia < player.stats.destreza:
-            print('inimigo errou ataque')
-        if inimigo.stats.acuracia > player.stats.destreza:
-            print('inimigo te atingiu')
-        if inimigo.stats.vida ==0 :
-            print('venceu inimigo')
-        if player.stats.vida ==0 : 
-            print('voce morreu')
+            # inimigo.stats.acuracia -=5
+            inimigo.stats.vida -= 5
+            # self.dueloInimigo('Inimgo errou ataque')
+            self.batalhaMensagem = 'Inimgo errou ataque'
+            # print('inimigo errou ataque')
+        elif inimigo.stats.acuracia > player.stats.destreza:
+            # print('inimigo te atingiu')
+            player.stats.vida -= 10
+            # self.dueloInimigo('Inimigo te acertou')
+            self.batalhaMensagem = 'Inimigo te acertou'
+            
+        if inimigo.stats.vida <=0 :
+            # print('venceu inimigo')
+            # self.dueloInimigo('Venceu o Inimigo')
+            self.batalhaMensagem = 'Venceu o Inimigo'
+            # self.modo_atual = 'run'
+            self.mapa.matriz[self.jogador.posicao.x][self.jogador.posicao.y] = ' '
+            
+        if player.stats.vida <=0 : 
+            # print('voce morreu')
+            # self.modo_atual = 'run'
+            pygame.quit()
 
 
     def modoCorre(self,visao_atual):
@@ -161,7 +200,7 @@ class Game:
 
     def modoSaida(self,visao_atual):
         screen.blit(visao_atual, (10,10))
-        text3 = basicfont.render('Fase finalizada', True, (0, 0, 0), (255, 255, 255))
+        text3 = basicfont.render('Parabens! Fase finalizada', True, (0, 0, 0), (255, 255, 255))
         screen.blit(text3, (50,500))
 
     def modoBau(self,visao_atual):
@@ -177,11 +216,16 @@ class Game:
         espada = randint(0,1)
         armadura = randint(0,1)
         pocoes = randint(0,3)
-        # if randint(0,1) == 1:
-        
+        if espada == 1:
+            bau.append('{} espada'.format(espada))
+        if armadura == 1:
+            bau.append('{} armadura'.format(armadura))
+        if pocoes > 0:
+            bau.append('{} pocoes'.format(pocoes))
+        # print(bau)
         for i in bau:
-            text1 = basicfont.render(i.nome, True, (0, 0, 0), (255, 255, 255))
-            screen.blit(text1, (50,500+altura))
+            text1 = basicfont.render(i, True, (0, 0, 0), (255, 255, 255))
+            screen.blit(text1, (50,560+altura))
             altura+=30
 
 
@@ -190,10 +234,23 @@ class Game:
         text1 = basicfont.render('inimigo encontrado', True, (0, 0, 0), (255, 255, 255))
         text3 = basicfont.render('X - atacar', True, (0, 0, 0), (255, 255, 255))
         text5 = basicfont.render('Z - pocao', True, (0, 0, 0), (255, 255, 255))
+        text6 = basicfont.render(self.batalhaMensagem, True, (0, 0, 0), (255, 255, 255))
 
         screen.blit(text1, (50,500))
         screen.blit(text3, (50,530))
         screen.blit(text5, (50,560))
+        screen.blit(text6, (50,590))
+
+    def dueloInimigo(self,mensagem=''):
+        print(mensagem,'*')
+        # screen.blit(inimigo.sprite, (10,10))
+        text1 = basicfont.render(mensagem, True, (0, 0, 0), (255, 255, 255))
+        # text3 = basicfont.render(jogador, True, (0, 0, 0), (255, 255, 255))
+        # text5 = basicfont.render('Z - pocao', True, (0, 0, 0), (255, 255, 255))
+
+        screen.blit(text1, (50,590))
+        # screen.blit(text3, (50,530))
+        # screen.blit(text5, (50,560))
 
     def changeModo(self):
         caracter = self.charPosicao()
@@ -208,6 +265,7 @@ class Game:
         
         elif self.modo_atual == 'batalha':
             inimigo = self.inimigos[int(caracter) -1 ]
+            # self.dueloInimigo()
             self.modoInimigo(inimigo)
 
     def comandoValido(self, comando):
@@ -227,13 +285,15 @@ class Game:
             self.mapa.matriz[self.jogador.posicao.x][self.jogador.posicao.y] = ' '
             self.modo_atual = 'run'
         
-        # elif modo_atual == 'saida':
-        #     print('acabou')
-        
+        elif self.modo_atual == 'saida':
+            self.mudarFase()
+            
         elif self.modo_atual == 'batalha':
             inimigo = self.inimigos[int(caracter) -1 ]
             self.inimigoEncontrado(comando, inimigo)
-    
+            if inimigo.stats.vida <= 0:
+                self.modo_atual =  'run'
+        
     def charPosicao(self):
         return self.mapa.matriz[self.jogador.posicao.x][self.jogador.posicao.y]
         

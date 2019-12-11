@@ -11,6 +11,7 @@ mapDict = {
     'B':pygame.image.load('./sprites/bau/Treasure Chest closed 16x16.png'),
     '*':pygame.image.load('./sprites/parede/wall-16.png'),
     'S':pygame.image.load('./sprites/porta/fsmdoor.png'),
+    'F':pygame.image.load('./sprites/parede/piso.jpg'),
     '1':pygame.image.load('./sprites/inimigo/demonio16.png'),
     '2':pygame.image.load('./sprites/inimigo/disciple16.png'),
     '3':pygame.image.load('./sprites/inimigo/dorver-idle0-16.png'),
